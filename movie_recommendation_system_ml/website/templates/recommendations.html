@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations for {{ movie_title }} - DN Flicks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="/">
+                    <i class="fas fa-film"></i>
+                    <span>DN Flicks</span>
+                </a>
+            </div>
+            <div class="nav-search">
+                <form action="/search" method="GET">
+                    <input type="text" name="q" placeholder="Search movies..." class="nav-search-input">
+                    <button type="submit" class="nav-search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+
+        <div class="back-button">
+            <a href="/" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+
+        <div class="recommendation-header">
+            <h1>Movies like <span class="highlight">{{ movie_title }}</span></h1>
+            <p>Based on content similarity and popularity</p>
+        </div>
+
+        <div class="movies-grid">
+            {% for movie in recommendations %}
+            <div class="movie-card">
+                <div class="movie-card-inner">
+                    <h3 class="movie-title">{{ movie.title }}</h3>
+                    <div class="movie-details">
+                        <span class="movie-genre">
+                            <i class="fas fa-tag"></i> 
+                            {{ movie.genres.split(',')[0] if movie.genres else 'N/A' }}
+                        </span>
+                        <span class="movie-rating">
+                            <i class="fas fa-star"></i> {{ movie.rating }}
+                        </span>
+                        <span class="movie-duration">
+                            <i class="fas fa-clock"></i> 
+                            {{ (movie.duration // 60) if movie.duration else '?' }}h 
+                            {{ (movie.duration % 60) if movie.duration else '?' }}m
+                        </span>
+                    </div>
+                    <div class="movie-director">
+                        <i class="fas fa-user"></i> 
+                        {{ movie.director.split(',')[0] if movie.director != 'Unknown' else 'Various Artists' }}
+                    </div>
+                    <div class="movie-similarity">
+                        <i class="fas fa-chart-line"></i> Match: {{ (movie.similarity * 100) | int }}%
+                    </div>
+                    <form action="/recommend" method="GET" class="movie-action">
+                        <input type="hidden" name="title" value="{{ movie.title }}">
+                        <button type="submit" class="btn-sm">
+                            <i class="fas fa-magic"></i> More Like This
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer class="footer">
+            <p>&copy; DN Flicks. Find your next favorite movie.</p>
+        </footer>
+    </div>
+</body>
+</html>
